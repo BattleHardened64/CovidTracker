@@ -6,7 +6,7 @@ import requests
 
 # Source: https://www.askpython.com/python/examples/pull-data-from-an-api
 
-response_API = requests.get("https://bamatracker.com/api") # connects to the API
+response_API = requests.get("https://api.covidactnow.org/v2/states.csv?apiKey=0d2a2b37b43e4eeabc6733eb04979486") # connects to the API
 data = response_API.text #gets the data from the API
 if(data):
     print("yee, data!")
