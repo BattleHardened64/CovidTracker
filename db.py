@@ -1,10 +1,11 @@
 import mysql.connector
 import csv
+import pandas
 ##############################################################
 #Eli Williams
 #Database File
 #Last worked on by E. Williams
-#2/3/22
+#2/7/22
 #ODBC drivers will need to be downloaded.
 #This file needs to be run everytime the server goes online.
 ##############################################################
@@ -43,17 +44,25 @@ mycursor.execute("CREATE TABLE Country (Cases INT, Deaths INT, Recovered INT, Fa
 mycursor.execute("CREATE TABLE State (Cases INT, Deaths INT, Recovered INT, Fatality Rate DOUBLE, Recovery Rate, DOUBLE)")
 mycursor.execute("CREATE TABLE County (Cases INT, Deaths INT, Recovered INT, Fatality Rate DOUBLE, Recovery Rate, DOUBLE)")
 
+
+#---------------------------------#
+#Eli Williams
+#Data Parsing before database input
+#Last Worked on by E. Williams
+#2/7/2022
+#---------------------------------#
 def data_parser():
     #pull data from csv file.
     file = open("data.csv")
     type(file)
     csvreader = csv.reader(file)
     header = next(csvreader)
+
     rows = []
     for row in csvreader:
         rows.append(row)
     file.close()
-    #delete excess data.
+    
 
     #insert into database.
-
+    sql_insert = "INSERT INTO "
