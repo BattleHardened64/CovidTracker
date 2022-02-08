@@ -1,6 +1,6 @@
 import mysql.connector
 import csv
-import pandas
+import pandas as pd
 ##############################################################
 #Eli Williams
 #Database File
@@ -52,17 +52,13 @@ mycursor.execute("CREATE TABLE County (Cases INT, Deaths INT, Recovered INT, Fat
 #2/7/2022
 #---------------------------------#
 def data_parser():
-    #pull data from csv file.
-    file = open("data.csv")
-    type(file)
-    csvreader = csv.reader(file)
-    header = next(csvreader)
-
-    rows = []
-    for row in csvreader:
-        rows.append(row)
-    file.close()
-    
-
+    #pull data from csv file. keyword usecols(pandas) only reads explicitly named columns, all others are ignored.
+    data = pd.read_csv("data.csv", usecols = 'Admin2' 'Province_State' 'Country_Region' 'Lat' 'Long_' 'Confirmed' 'Deaths' 'Recovered' 'Active' 'Incident_Rate' 'Case_Fatality_Ratio')
+    #admin2 is county, province_state is state, country is country
+    #if admin2 and province state are null, we are looking at the country
+    #if province_state has a value, we are looking at a state within a country.
+    #if admin2 is filled we are looking at a county within a state/province
+    #State data must be calculated using the county data
+    #country data must be calculated using the state data.
     #insert into database.
     sql_insert = "INSERT INTO "
