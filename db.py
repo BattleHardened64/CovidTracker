@@ -1,6 +1,7 @@
 import mysql.connector
 import csv
 import pandas as pd
+import pullCovidData
 ##############################################################
 #Eli Williams
 #Database File
@@ -10,6 +11,9 @@ import pandas as pd
 #This file needs to be run everytime the server goes online.
 ##############################################################
 
+##############################################################
+###################### Deprecated ############################
+##############################################################
 #-------------------------------#
 #Eli Williams
 #Database Initialization
@@ -68,8 +72,7 @@ data = pd.read_csv("data.csv", usecols = 'Admin2' 'Province_State' 'Country_Regi
 #2/7/2022
 #---------------------------------#
 def county_input():
-    for x in data:
-        if(data.Admin2 == None)
+    
     sql_insert = "INSERT INTO Location (County, State, Country, Latitude, Longitude, Confirmed, Deaths, Recovered, Active, Incident_Rate, Fatality_Rate) VALUES (%s, %s, %s, %f, %f, %d, %d, %d, %d, %f, %f)"
 
 
