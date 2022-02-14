@@ -8,8 +8,12 @@ import dateutil
 from datetime import timedelta, date
 from contextlib import closing
 from codecs import iterdecode
+import wget
+import urllib.request, json 
 
-def pullCovidData():
+
+
+def pullCovidData_old():
         #Source: https://github.com/CSSEGISandData/COVID-19
 
         #go through each date sequentially from start to end date
@@ -30,7 +34,7 @@ def pullCovidData():
 
         #YYYY MM DD
         #hard code start date that data began being recorded. date(2020, 1, 22)
-        start_date = date(2022, 1, 22) #date(2022, 2, 2) #temporary date for testing
+        start_date = date(2022, 2, 13) #date(2022, 2, 2) #temporary date for testing
         end_date = date.today()
 
         #loop through every date until we get to todays date
@@ -56,7 +60,23 @@ def pullCovidData():
             """
    
 
+def pullCovidData():
+    
+    #wget.download(url,"C:/Users/djtol/Downloads/Temp/covid_data.json")
+    
+    #url = "https://api.covid19tracking.narrativa.com/api/2022-02-14"
+    #myfile = requests.get(url)
+    
+    #response_API = requests.get("https://api.covid19tracking.narrativa.com/api/2022-02-14/country/spain")
+    #data = response_API.text #gets the data from the API
+    #if(data):
+    #    print(data)
+   
+    with urllib.request.urlopen("https://api.covid19tracking.narrativa.com/api/2022-02-14") as url:
+        data = json.loads(url.read().decode())
+        print(data)
+
+
+
+
 pullCovidData()
-
-
-
