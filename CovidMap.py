@@ -4,14 +4,20 @@ import pandas as pd
 import dateutil
 import string
 import urllib
+import datetime
 #######################################################################
 # Eli Williams
 # This file is for organizing data in the CSV file for the covid map.
 # Last Edited: 2 - 14 - 2022
 #######################################################################
 
-
-
+# Eli Williams
+# This function pulls in all past data files from the github repository and saves them into the CovidTracker github
+# This function needs to be called once upon initialization
+# Last Edited: 2/16/22
+def readPreviousCSVs():
+    url = "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports"
+    date = "01-22-2020"
 
 
 
@@ -26,3 +32,30 @@ def readCSV(date):
     filename, headers = urllib.request.urlretrieve(url, filename = "https://github.com/BattleHardened64/CovidTracker/tree/CovidMap")
 
 
+
+# Eli Williams
+# parseFile, this function organizes data from . 
+# This needs to be called multiple times to organize the csv files.
+# This code is modified from https://stackoverflow.com/questions/16306819/python-edit-csv-headers
+# Last Edited: 2/14/22
+def parseFile(File):
+    outputFileName = os.path.splitext(File) + ".csv"
+    with open(File, newline='') as inFile, open(outputFileName, 'w', newline='') as outfile:
+         r = csv.reader(inFile)
+    w = csv.writer(outfile)
+
+    next(r, None)  # skip the first row from the reader, the old header
+    # write new header
+    w.writerow(['FIPS', 'County', 'State/Province', 'Country/Region','Last Updated', 'Latitude', 'Longitude', 'Confirmed Cases', 'Deaths', 'Recovered', 'Active Cases', 'Location'])
+
+    # copy the rest
+    for row in r:
+        w.writerow(row)
+
+
+# Eli Williams
+# pullData, this function pulls all the previous files from the github. 
+# This needs to be called once.
+# Last Edited: 2/14/22
+def pullData():
+    stuff = ""
