@@ -18,6 +18,16 @@ import datetime
 def readPreviousCSVs():
     url = "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports"
     date = "01-22-2020"
+    date_temp = datetime.datetime.strptime(date, "%m-%d-%y")
+    for i in range (1, 755):  #all the days between 1/22/20 and 2/16/22
+        new_date = date_temp + datetime.timedelta(days=1)
+        #filename = new_date + ".csv" # This line might break; not sure if dates can be treated as strings.
+        filename, headers = urllib.request.urlretrieve(url, filename = "https://github.com/BattleHardened64/CovidTracker/tree/CovidMap") #ADD TO GITHUB (WE NEED A FILE)
+        filename += date_temp + ".csv"  # This line may break? Unsure.  Need to write a test.
+        parseFile(filename)
+
+
+
 
 
 
@@ -33,13 +43,14 @@ def readCSV(date):
 
 
 
+
 # Eli Williams
 # parseFile, this function organizes data from . 
 # This needs to be called multiple times to organize the csv files.
 # This code is modified from https://stackoverflow.com/questions/16306819/python-edit-csv-headers
 # Last Edited: 2/14/22
 def parseFile(File):
-    outputFileName = os.path.splitext(File) + ".csv"
+    outputFileName = "https://github.com/BattleHardened64/CovidTracker/tree/CovidMap" + File + ".csv"  # NEED TO CREATE A FOLDER IN GITHUB FOR THESE FILES.
     with open(File, newline='') as inFile, open(outputFileName, 'w', newline='') as outfile:
          r = csv.reader(inFile)
     w = csv.writer(outfile)
