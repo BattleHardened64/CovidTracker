@@ -1,15 +1,9 @@
-
-
 import os
 import csv
-import pandas as pd
 import requests
-import dateutil
 from datetime import timedelta, date
 from contextlib import closing
-from codecs import iterdecode
-import wget
-import urllib.request, json 
+import json
 
 
 
@@ -62,20 +56,91 @@ def pullCovidData_old():
 
 def pullCovidData():
     
-    #wget.download(url,"C:/Users/djtol/Downloads/Temp/covid_data.json")
-    
-    #url = "https://api.covid19tracking.narrativa.com/api/2022-02-14"
-    #myfile = requests.get(url)
-    
-    #response_API = requests.get("https://api.covid19tracking.narrativa.com/api/2022-02-14/country/spain")
-    #data = response_API.text #gets the data from the API
-    #if(data):
-    #    print(data)
-   
-    with urllib.request.urlopen("https://api.covid19tracking.narrativa.com/api/2022-02-14") as url:
-        data = json.loads(url.read().decode())
-        print(data)
+    fileName = "covid-data.json"
 
+    url_date = input("Enter the date in the following format: YYYY-MM-DD\n")
+
+    url = ("https://api.covid19tracking.narrativa.com/api/"+url_date)
+    myfile = requests.get(url)
+    
+    text = myfile.text
+
+    data = json.loads(text)
+
+    #key = data['dates']
+    #key2 = key[url_date]
+    #key3 = key2['countries']
+    #key4 = key3['Poland']
+    #print(key4['today_new_open_cases'])
+
+    date = url_date
+    key = data['total']
+    today_confirmed = key['today_confirmed']
+    today_deaths = key['today_deaths']
+    today_new_confirmed = key['today_new_confirmed']
+    today_new_deaths = key['today_new_deaths']
+    today_new_open_cases = key['today_new_open_cases']
+    today_new_recovered = key['today_new_recovered']
+    today_open_cases = key['today_open_cases']
+    today_recovered = key['today_recovered']
+    yesterday_confirmed = key['yesterday_confirmed']
+    yesterday_deaths = key['yesterday_deaths']
+    yesterday_open_cases = key['yesterday_open_cases']
+    yesterday_recovered = key['yesterday_recovered']
+
+    diff_open = ( today_open_cases - yesterday_open_cases)
+
+
+    today_confirmed = str(today_confirmed)
+    today_deaths =str(today_deaths)
+    today_new_confirmed = str(today_new_confirmed)
+    today_new_deaths = str(today_new_deaths)
+    today_new_open_cases =str(today_new_open_cases)
+    today_new_recovered = str(today_new_recovered)
+    today_open_cases = str(today_open_cases)
+    today_recovered = str(today_recovered)
+    yesterday_confirmed = str(yesterday_confirmed)
+    yesterday_deaths =str(yesterday_deaths)
+    yesterday_open_cases =str(yesterday_open_cases)
+    yesterday_recovered =str(yesterday_recovered)
+
+   
+
+    print("Today's World Total Information:\n")
+    print("Date: " + url_date +'\n')
+    print("Total Confirmed Cases:"+ today_confirmed +'\n')
+    print("Today's New Confirmmed Cases: "+today_new_confirmed+'\n')
+    print("Total Deaths: "+today_deaths+'\n')
+    print("Today's Death Count: "+today_new_deaths+'\n')
+    print("Total Current Cases: "+today_open_cases+'\n')
+    print("Today's Current Cases: "+today_new_open_cases+'\n')
+    print("Total Recovered Cases: "+today_recovered+'\n')
+    print("Today's Recovered Cases: "+today_new_recovered+'\n')
+    print("\Yesterady's Data\n\n")
+
+    print("Yesterday's Confirmed Cases: "+yesterday_confirmed+'\n')
+    print("Yesterday's Deaths: "+yesterday_deaths+'\n')
+    print("Yesterday's Open Cases: "+yesterday_open_cases+'\n')
+    print("Yesterday's Recovered Cases: "+yesterday_recovered+'\n')
+    
+    print("\nAnalysis:\n\n")
+    
+    if(diff_open < 0):
+        diff_open = diff_open * -1
+        diff_open = str(diff_open)
+        print("There has been a net gain of " + diff_open + " cases\n")
+
+
+    else:
+        diff_open = str(diff_open)
+        print("There has been a net decrease of " + diff_open + " cases\n")
+
+    '''file = open(fileName, "w")
+    json.dump(data,file)
+    file.close()'''
+   
+    
+    
 
 
 
