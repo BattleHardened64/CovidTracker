@@ -29,9 +29,6 @@ def readPreviousCSVs():
 
 
 
-
-
-
 # Eli Williams
 # readCSV, this function pulls the file from the github. 
 # This needs to be called daily to pull the latest file from the github.
