@@ -8,7 +8,7 @@ import datetime
 #######################################################################
 # Eli Williams
 # This file is for organizing data in the CSV file for the covid map.
-# Last Edited: 2 - 14 - 2022
+# Last Edited: 2 - 18 - 2022
 #######################################################################
 
 # Eli Williams
@@ -32,10 +32,11 @@ def readPreviousCSVs():
 # Eli Williams
 # readCSV, this function pulls the file from the github. 
 # This needs to be called daily to pull the latest file from the github.
-# Last Edited: 2/14/22
+# Last Edited: 2/17/22
 def readCSV(date):
     date += '.csv'
     url = "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports"
+    #We need to add a file to the github for all old files...
     filename, headers = urllib.request.urlretrieve(url, filename = "https://github.com/BattleHardened64/CovidTracker/tree/CovidMap")
 
 
@@ -45,7 +46,7 @@ def readCSV(date):
 # parseFile, this function organizes data from . 
 # This needs to be called multiple times to organize the csv files.
 # This code is modified from https://stackoverflow.com/questions/16306819/python-edit-csv-headers
-# Last Edited: 2/14/22
+# Last Edited: 2/18/22
 def parseFile(File):
     outputFileName = "https://github.com/BattleHardened64/CovidTracker/tree/CovidMap" + File + ".csv"  # NEED TO CREATE A FOLDER IN GITHUB FOR THESE FILES.
     with open(File, newline='') as inFile, open(outputFileName, 'w', newline='') as outfile:
