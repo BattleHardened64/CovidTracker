@@ -269,11 +269,10 @@ def pullCovidData():
 
     data = json.loads(text)
 
-    #key = data['dates']
-    #key2 = key[url_date]
-    #key3 = key2['countries']
-    #key4 = key3['Poland']
-    #print(key4['today_new_open_cases'])
+    file = open(fileName, "w")
+    json.dump(data,file)
+    file.close()
+
 
     date = url_date
     key = data['total']
@@ -330,12 +329,12 @@ def pullCovidData():
     if(diff_open < 0):
         diff_open = diff_open * -1
         diff_open = str(diff_open)
-        print("There has been a net gain of " + diff_open + " cases\n")
+        print("There has been a net gain of " + diff_open + " cases since yesterday\n")
 
 
     else:
         diff_open = str(diff_open)
-        print("There has been a net decrease of " + diff_open + " cases\n")
+        print("There has been a net decrease of " + diff_open + " cases since yesterday\n")
 
 
 
@@ -350,14 +349,6 @@ def pullCovidData():
         key5 = str(key5)
         print("Confirmed cases for " + country + ": " + key5)
         counter += 1
-
-    '''file = open(fileName, "w")
-    json.dump(data,file)
-    file.close()'''
-   
-    
-    
-
 
 
 pullCovidData()
