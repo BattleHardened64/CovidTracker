@@ -56,7 +56,7 @@ def parseFile(File):
 
     next(r, None)  # skip the first row from the reader, the old header
     # write new header
-    w.writerow(['FIPS', 'County', 'State/Province', 'Country/Region','Last Updated', 'Latitude', 'Longitude', 'Confirmed Cases', 'Deaths', 'Recovered', 'Active Cases', 'Location'])
+    w.writerow(['FIPS', 'County', 'State/Province', 'Country/Region','Last Updated', 'Latitude', 'Longitude', 'Confirmed Cases', 'Deaths', 'Recovered', 'Active Cases', 'Location', 'Incident Rate', 'Fatality Rate'])
 
     # copy the rest
     for row in r:
