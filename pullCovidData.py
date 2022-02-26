@@ -260,7 +260,27 @@ def pullCovidData():
     
     fileName = "covid-data.json"
 
-    url_date = input("Enter the date in the following format: YYYY-MM-DD\n")
+    #Depricated, reads in date as a string.
+    #url_date = input("Enter the date in the following format: YYYY-MM-DD\n")
+
+    print("Enter the date you wish to start at in the following format: YYYY MM DD")
+    date = input()
+    start_date_y = int(date[0:4])
+    start_date_m = int(date[5:8])
+    start_date_d = int(date[7:10])
+
+    backup_start_year = start_date_y
+    backup_start_month = start_date_m
+    backup_start_day = start_date_d
+
+    start_date_y = str(start_date_y)
+    start_date_m = str(start_date_m)
+    start_date_d = str(start_date_d)
+
+    url_date = (start_date_y + "-" + start_date_m + "-" + start_date_d)
+    url_date = str(url_date)
+
+    url_backup = url_date
 
     url = ("https://api.covid19tracking.narrativa.com/api/"+url_date)
     myfile = requests.get(url)
@@ -274,82 +294,273 @@ def pullCovidData():
     file.close()
 
 
-    date = url_date
-    key = data['total']
-    today_confirmed = key['today_confirmed']
-    today_deaths = key['today_deaths']
-    today_new_confirmed = key['today_new_confirmed']
-    today_new_deaths = key['today_new_deaths']
-    today_new_open_cases = key['today_new_open_cases']
-    today_new_recovered = key['today_new_recovered']
-    today_open_cases = key['today_open_cases']
-    today_recovered = key['today_recovered']
-    yesterday_confirmed = key['yesterday_confirmed']
-    yesterday_deaths = key['yesterday_deaths']
-    yesterday_open_cases = key['yesterday_open_cases']
-    yesterday_recovered = key['yesterday_recovered']
+    choice = int(input("Welcome to the COVID-19 Information Tracker. Please enter the number of one of the following options below to explore the data:\n"
+              "1. Global Totals for Today\n"
+              "2. Today's Case Totals by Country\n"
+              "3. Research Today's Data by Country\n"
+              "4. Total Cases Worldwide over a range of days\n"))
 
-    diff_open = ( today_open_cases - yesterday_open_cases)
+    if(choice == 1):
+
+        date = url_date
+        key = data['total']
+        today_confirmed = key['today_confirmed']
+        today_deaths = key['today_deaths']
+        today_new_confirmed = key['today_new_confirmed']
+        today_new_deaths = key['today_new_deaths']
+        today_new_open_cases = key['today_new_open_cases']
+        today_new_recovered = key['today_new_recovered']
+        today_open_cases = key['today_open_cases']
+        today_recovered = key['today_recovered']
+        yesterday_confirmed = key['yesterday_confirmed']
+        yesterday_deaths = key['yesterday_deaths']
+        yesterday_open_cases = key['yesterday_open_cases']
+        yesterday_recovered = key['yesterday_recovered']
+
+        diff_open = ( today_open_cases - yesterday_open_cases)
 
 
-    today_confirmed = str(today_confirmed)
-    today_deaths =str(today_deaths)
-    today_new_confirmed = str(today_new_confirmed)
-    today_new_deaths = str(today_new_deaths)
-    today_new_open_cases =str(today_new_open_cases)
-    today_new_recovered = str(today_new_recovered)
-    today_open_cases = str(today_open_cases)
-    today_recovered = str(today_recovered)
-    yesterday_confirmed = str(yesterday_confirmed)
-    yesterday_deaths =str(yesterday_deaths)
-    yesterday_open_cases =str(yesterday_open_cases)
-    yesterday_recovered =str(yesterday_recovered)
+        today_confirmed = str(today_confirmed)
+        today_deaths =str(today_deaths)
+        today_new_confirmed = str(today_new_confirmed)
+        today_new_deaths = str(today_new_deaths)
+        today_new_open_cases =str(today_new_open_cases)
+        today_new_recovered = str(today_new_recovered)
+        today_open_cases = str(today_open_cases)
+        today_recovered = str(today_recovered)
+        yesterday_confirmed = str(yesterday_confirmed)
+        yesterday_deaths =str(yesterday_deaths)
+        yesterday_open_cases =str(yesterday_open_cases)
+        yesterday_recovered =str(yesterday_recovered)
 
    
 
-    print("Today's World Total Information:\n")
-    print("Date: " + url_date +'\n')
-    print("Total Confirmed Cases:"+ today_confirmed +'\n')
-    print("Today's New Confirmmed Cases: "+today_new_confirmed+'\n')
-    print("Total Deaths: "+today_deaths+'\n')
-    print("Today's Death Count: "+today_new_deaths+'\n')
-    print("Total Current Cases: "+today_open_cases+'\n')
-    print("Today's Current Cases: "+today_new_open_cases+'\n')
-    print("Total Recovered Cases: "+today_recovered+'\n')
-    print("Today's Recovered Cases: "+today_new_recovered+'\n')
-    print("\Yesterady's Data\n\n")
+        print("Today's World Total Information:\n")
+        print("Date: " + url_date +'\n')
+        print("Total Confirmed Cases:"+ today_confirmed +'\n')
+        print("Today's New Confirmmed Cases: "+today_new_confirmed+'\n')
+        print("Total Deaths: "+today_deaths+'\n')
+        print("Today's Death Count: "+today_new_deaths+'\n')
+        print("Total Current Cases: "+today_open_cases+'\n')
+        print("Today's Current Cases: "+today_new_open_cases+'\n')
+        print("Total Recovered Cases: "+today_recovered+'\n')
+        print("Today's Recovered Cases: "+today_new_recovered+'\n')
+        print("Yesterady's Data\n\n")
 
-    print("Yesterday's Confirmed Cases: "+yesterday_confirmed+'\n')
-    print("Yesterday's Deaths: "+yesterday_deaths+'\n')
-    print("Yesterday's Open Cases: "+yesterday_open_cases+'\n')
-    print("Yesterday's Recovered Cases: "+yesterday_recovered+'\n')
+        print("Yesterday's Confirmed Cases: "+yesterday_confirmed+'\n')
+        print("Yesterday's Deaths: "+yesterday_deaths+'\n')
+        print("Yesterday's Open Cases: "+yesterday_open_cases+'\n')
+        print("Yesterday's Recovered Cases: "+yesterday_recovered+'\n')
     
-    print("\nAnalysis:\n\n")
+        print("\nAnalysis:\n\n")
     
-    if(diff_open < 0):
-        diff_open = diff_open * -1
-        diff_open = str(diff_open)
-        print("There has been a net gain of " + diff_open + " cases since yesterday\n")
+        if(diff_open < 0):
+            diff_open = diff_open * -1
+            diff_open = str(diff_open)
+            print("There has been a net gain of " + diff_open + " cases since yesterday\n")
 
 
-    else:
-        diff_open = str(diff_open)
-        print("There has been a net decrease of " + diff_open + " cases since yesterday\n")
+        else:
+            diff_open = str(diff_open)
+            print("There has been a net decrease of " + diff_open + " cases since yesterday\n")
+
+    if(choice == 2):
+        key = data['dates']
+        key2 = key[url_date]
+        key3 = key2['countries']
+        counter = 1
+        while(counter < 196):
+            country = countries_func(counter)
+            try:
+                key4 = key3[countries_func(counter)]
+            except:
+                counter += 1
+            else:
+                key5 = key4["today_confirmed"]
+                key5 = str(key5)
+                print("Confirmed cases for " + country + ": " + key5)
+                counter += 1
+
+    if(choice == 3):
+        key = data['dates']
+        key2 = key[url_date]
+        key3 = key2['countries']
+        country = input("Enter a country name to research\n")
+        try:
+            key4 = key3[country]
+
+        except:
+            country = input("Please enter a valid country name\n")
+            key4 = key3[country]
+
+
+        today_confirmed = key4['today_confirmed']
+        today_deaths = key4['today_deaths']
+        today_new_confirmed = key4['today_new_confirmed']
+        today_new_deaths = key4['today_new_deaths']
+        today_new_open_cases = key4['today_new_open_cases']
+        today_new_recovered = key4['today_new_recovered']
+        today_open_cases = key4['today_open_cases']
+        today_recovered = key4['today_recovered']
+        yesterday_confirmed = key4['yesterday_confirmed']
+        yesterday_deaths = key4['yesterday_deaths']
+        yesterday_open_cases = key4['yesterday_open_cases']
+        yesterday_recovered = key4['yesterday_recovered']
+
+        diff_open = ( today_open_cases - yesterday_open_cases)
+
+
+        today_confirmed = str(today_confirmed)
+        today_deaths =str(today_deaths)
+        today_new_confirmed = str(today_new_confirmed)
+        today_new_deaths = str(today_new_deaths)
+        today_new_open_cases =str(today_new_open_cases)
+        today_new_recovered = str(today_new_recovered)
+        today_open_cases = str(today_open_cases)
+        today_recovered = str(today_recovered)
+        yesterday_confirmed = str(yesterday_confirmed)
+        yesterday_deaths =str(yesterday_deaths)
+        yesterday_open_cases =str(yesterday_open_cases)
+        yesterday_recovered =str(yesterday_recovered)
+
+   
+
+        print("Today's World Total Information:\n")
+        print("Date: " + url_date +'\n')
+        print("Total Confirmed Cases:"+ today_confirmed +'\n')
+        print("Today's New Confirmmed Cases: "+today_new_confirmed+'\n')
+        print("Total Deaths: "+today_deaths+'\n')
+        print("Today's Death Count: "+today_new_deaths+'\n')
+        print("Total Current Cases: "+today_open_cases+'\n')
+        print("Today's Current Cases: "+today_new_open_cases+'\n')
+        print("Total Recovered Cases: "+today_recovered+'\n')
+        print("Today's Recovered Cases: "+today_new_recovered+'\n')
+        print("Yesterady's Data\n\n")
+
+        print("Yesterday's Confirmed Cases: "+yesterday_confirmed+'\n')
+        print("Yesterday's Deaths: "+yesterday_deaths+'\n')
+        print("Yesterday's Open Cases: "+yesterday_open_cases+'\n')
+        print("Yesterday's Recovered Cases: "+yesterday_recovered+'\n')
+    
+        print("\nAnalysis:\n\n")
+    
+        if(diff_open < 0):
+            diff_open = diff_open * -1
+            diff_open = str(diff_open)
+            print("There has been a net gain of " + diff_open + " cases since yesterday\n")
+
+
+        else:
+            diff_open = str(diff_open)
+            print("There has been a net decrease of " + diff_open + " cases since yesterday\n")
+
+    if(choice == 4):
+
+            print("Enter the last day in the range you wish to search at in the following format: YYYY MM DD\n")
+            date = input()
+            end_date_y = int(date[0:4])
+            end_date_m = int(date[5:8])
+            end_date_d = int(date[7:10])
+
+            backup_end_year = end_date_y
+            backup_end_month = end_date_m
+            backup_end_day = end_date_d
+
+
+            
+            while(backup_end_year < backup_start_year or (backup_end_year == backup_start_year and backup_end_month < backup_start_month) or 
+                 (backup_end_year == backup_start_year and backup_end_month == backup_start_month and backup_end_day < backup_start_day + 1)):
+
+                print("Invalid ending date. Final date must be at least 1 day after the starting day.\n")
+                print("Enter the last day in the range you wish to search at in the following format: YYYY MM DD\n")
+                date = input()
+                
+                print("\n\n")
+
+                end_date_y = int(date[0:4])
+                end_date_m = int(date[5:8])
+                end_date_d = int(date[7:10])
+
+                backup_end_year = end_date_y
+                backup_end_month = end_date_m
+                backup_end_day = end_date_d
+
+
+            total_new_cases = 0
+            print("Please wait, calculating total new cases\n")
+            while((backup_end_year != backup_start_year or backup_end_month != backup_start_month or backup_end_day != backup_start_day)):
+
+                
+                date = url_date
+                key = data['total']
+                today_new_confirmed = key['today_new_confirmed']
+                total_new_cases += today_new_confirmed
+
+
+                backup_start_day += 1
+
+                if(backup_start_day == 32 and (backup_start_month == 1 or backup_start_month == 3 or backup_start_month == 5 or 
+                   backup_start_month == 7 or backup_start_month == 8 or backup_start_month == 10)):
+
+                    backup_start_day = 1
+                    backup_start_month += 1
+
+                if(backup_start_day == 29 and backup_start_month == 2):
+
+                    backup_start_day = 1
+                    backup_start_month += 1
+
+                if(backup_start_day == 31 and (backup_start_month == 4 or backup_start_month == 6  or backup_start_month == 9  or backup_start_month == 11)):
+                    backup_start_day = 1
+                    backup_start_month += 1
+
+                if(backup_start_day == 32 and backup_start_month == 12):
+                    backup_start_year += 1
+                    backup_start_month = 1
+                    backup_start_day = 1
+
+
+                start_date_y = backup_start_year  
+                start_date_m = backup_start_month 
+                start_date_d = backup_start_day  
 
 
 
-    key = data['dates']
-    key2 = key[url_date]
-    key3 = key2['countries']
-    counter = 1
-    while(counter < 196):
-        country = countries_func(counter)
-        key4 = key3[countries_func(counter)]
-        key5 = key4["today_confirmed"]
-        key5 = str(key5)
-        print("Confirmed cases for " + country + ": " + key5)
-        counter += 1
+                start_date_y = str(start_date_y)
 
+                if(backup_start_month >= 10):
+                    start_date_m = str(start_date_m)
+
+                if(backup_start_month < 10):
+                    start_date_m = str(start_date_m)
+                    start_date_m = ("0" + start_date_m)
+
+                if(backup_start_day >= 10):
+                    start_date_d = str(start_date_d)
+                    
+
+                if(backup_start_day < 10):
+                    start_date_d = str(start_date_d)
+                    start_date_d = ("0" + start_date_d)
+                
+
+
+                url_date = (start_date_y + "-" + start_date_m + "-" + start_date_d)
+                url_date = str(url_date)
+
+                url = ("https://api.covid19tracking.narrativa.com/api/"+url_date)
+                myfile = requests.get(url)
+    
+                text = myfile.text
+
+                data = json.loads(text)
+               
+                start_date_y = int(start_date_y)
+                start_date_m = int(start_date_m)
+                start_date_d = int(start_date_d)
+
+            total_new_cases = str(total_new_cases)
+            print("The total number of new cases over the date range of " + url_backup + " to " + url_date + " is: " + total_new_cases)
 
 pullCovidData()
 
