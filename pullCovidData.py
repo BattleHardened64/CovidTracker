@@ -5,56 +5,6 @@ from datetime import timedelta, date
 from contextlib import closing
 import json
 
-
-
-def pullCovidData_old():
-        #Source: https://github.com/CSSEGISandData/COVID-19
-
-        #go through each date sequentially from start to end date
-        def daterange(start_date, end_date):
-            for n in range(int ((end_date - start_date).days)):
-                yield start_date + timedelta(n)
-
-
-        #Code for testing date ranges:
-        #print("Enter the date you wish to start at in the following format: YYYY MM DD")
-        #date = input()
-        #start_date_y = int(date[0:4])
-        #start_date_m = int(date[5:8])
-        #start_date_d = int(date[8:10])
-
-        #date = (start_date_y, start_date_m, start_date_d)
-        
-
-        #YYYY MM DD
-        #hard code start date that data began being recorded. date(2020, 1, 22)
-        start_date = date(2022, 2, 13) #date(2022, 2, 2) #temporary date for testing
-        end_date = date.today()
-
-        #loop through every date until we get to todays date
-        for single_date in daterange(start_date, end_date):
-            datestr=single_date.strftime("%m-%d-%Y")
-            #This is the url to pull data from the github
-            url = r'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/'+datestr+'.csv' 
-    
-            #Here is where you would store the data to sql
-            print(url)
-    
-            #downloads data as csv
-            with open(os.path.split(url)[1], 'wb') as f, \
-                    requests.get(url, stream=True) as r:
-                for line in r.iter_lines():
-                    f.write(line+'\n'.encode())
-            """ 
-            #use this code if you want csv in variable
-            with requests.get(url, stream=True) as r:
-                lines = (line.decode('utf-8') for line in r.iter_lines())
-                for row in csv.reader(lines):
-                    print(row)
-            """
-   
-
-
 def countries_func(counter):
      country_list = {
         1:"Afghanistan",
@@ -263,22 +213,47 @@ def pullCovidData():
     #Depricated, reads in date as a string.
     #url_date = input("Enter the date in the following format: YYYY-MM-DD\n")
 
-    print("Enter the date you wish to start at in the following format: YYYY MM DD")
+    print("Welcome to the COVID-19 Information Tracker. Your searching options are as follows:\n"
+              "1. Global Totals for Today\n"
+              "2. Today's Case Totals by Country\n"
+              "3. Totals by Country\n"
+              "4. Total Cases Worldwide over a range of days\n"
+              "5. Total Deaths Worldwide over a range of days\n"
+              "6. Total Recoveries Worldwide over a range of days\n"
+              "7. Total Cases, Deaths, and Recoveries Worldwide over a range of days\n")
+
+    print("Enter the date and search option you want at in the following format: YYYY MM DD Choice")
     date = input()
     start_date_y = int(date[0:4])
     start_date_m = int(date[5:8])
     start_date_d = int(date[7:10])
+    choice = int(date[11])
 
     backup_start_year = start_date_y
     backup_start_month = start_date_m
     backup_start_day = start_date_d
 
+
     start_date_y = str(start_date_y)
-    start_date_m = str(start_date_m)
-    start_date_d = str(start_date_d)
+    if(backup_start_month >= 10):
+      start_date_m = str(start_date_m)
+
+    if(backup_start_month < 10):
+      start_date_m = str(start_date_m)
+      start_date_m = ("0" + start_date_m)
+
+    if(backup_start_day >= 10):
+      start_date_d = str(start_date_d)
+                    
+
+    if(backup_start_day < 10):
+      start_date_d = str(start_date_d)
+      start_date_d = ("0" + start_date_d)
+
 
     url_date = (start_date_y + "-" + start_date_m + "-" + start_date_d)
     url_date = str(url_date)
+
 
     url_backup = url_date
 
@@ -294,11 +269,7 @@ def pullCovidData():
     file.close()
 
 
-    choice = int(input("Welcome to the COVID-19 Information Tracker. Please enter the number of one of the following options below to explore the data:\n"
-              "1. Global Totals for Today\n"
-              "2. Today's Case Totals by Country\n"
-              "3. Research Today's Data by Country\n"
-              "4. Total Cases Worldwide over a range of days\n"))
+    
 
     if(choice == 1):
 
@@ -382,6 +353,7 @@ def pullCovidData():
                 counter += 1
 
     if(choice == 3):
+
         key = data['dates']
         key2 = key[url_date]
         key3 = key2['countries']
@@ -561,7 +533,344 @@ def pullCovidData():
 
             total_new_cases = str(total_new_cases)
             print("The total number of new cases over the date range of " + url_backup + " to " + url_date + " is: " + total_new_cases)
+            
+    if(choice == 5):
+            print("Enter the last day in the range you wish to search at in the following format: YYYY MM DD\n")
+            date = input()
+            end_date_y = int(date[0:4])
+            end_date_m = int(date[5:8])
+            end_date_d = int(date[7:10])
 
+            backup_end_year = end_date_y
+            backup_end_month = end_date_m
+            backup_end_day = end_date_d
+
+
+            
+            while(backup_end_year < backup_start_year or (backup_end_year == backup_start_year and backup_end_month < backup_start_month) or 
+                 (backup_end_year == backup_start_year and backup_end_month == backup_start_month and backup_end_day < backup_start_day + 1)):
+
+                print("Invalid ending date. Final date must be at least 1 day after the starting day.\n")
+                print("Enter the last day in the range you wish to search at in the following format: YYYY MM DD\n")
+                date = input()
+                
+                print("\n\n")
+
+                end_date_y = int(date[0:4])
+                end_date_m = int(date[5:8])
+                end_date_d = int(date[7:10])
+
+                backup_end_year = end_date_y
+                backup_end_month = end_date_m
+                backup_end_day = end_date_d
+
+
+            total_deaths = 0
+            print("Please wait, calculating total new cases\n")
+            while((backup_end_year != backup_start_year or backup_end_month != backup_start_month or backup_end_day != backup_start_day)):
+
+                
+                date = url_date
+                key = data['total']
+                today_deaths = key['today_deaths']
+                total_deaths += today_deaths
+
+
+                backup_start_day += 1
+
+                if(backup_start_day == 32 and (backup_start_month == 1 or backup_start_month == 3 or backup_start_month == 5 or 
+                   backup_start_month == 7 or backup_start_month == 8 or backup_start_month == 10)):
+
+                    backup_start_day = 1
+                    backup_start_month += 1
+
+                if(backup_start_day == 29 and backup_start_month == 2):
+
+                    backup_start_day = 1
+                    backup_start_month += 1
+
+                if(backup_start_day == 31 and (backup_start_month == 4 or backup_start_month == 6  or backup_start_month == 9  or backup_start_month == 11)):
+                    backup_start_day = 1
+                    backup_start_month += 1
+
+                if(backup_start_day == 32 and backup_start_month == 12):
+                    backup_start_year += 1
+                    backup_start_month = 1
+                    backup_start_day = 1
+
+
+                start_date_y = backup_start_year  
+                start_date_m = backup_start_month 
+                start_date_d = backup_start_day  
+
+
+
+                start_date_y = str(start_date_y)
+
+                if(backup_start_month >= 10):
+                    start_date_m = str(start_date_m)
+
+                if(backup_start_month < 10):
+                    start_date_m = str(start_date_m)
+                    start_date_m = ("0" + start_date_m)
+
+                if(backup_start_day >= 10):
+                    start_date_d = str(start_date_d)
+                    
+
+                if(backup_start_day < 10):
+                    start_date_d = str(start_date_d)
+                    start_date_d = ("0" + start_date_d)
+                
+
+
+                url_date = (start_date_y + "-" + start_date_m + "-" + start_date_d)
+                url_date = str(url_date)
+
+                url = ("https://api.covid19tracking.narrativa.com/api/"+url_date)
+                myfile = requests.get(url)
+    
+                text = myfile.text
+
+                data = json.loads(text)
+               
+                start_date_y = int(start_date_y)
+                start_date_m = int(start_date_m)
+                start_date_d = int(start_date_d)
+
+            total_deaths = str(total_deaths)
+            print("The total number of deaths over the date range of " + url_backup + " to " + url_date + " is: " + total_deaths)
+
+    if(choice == 6):
+
+            print("Enter the last day in the range you wish to search at in the following format: YYYY MM DD\n")
+            date = input()
+            end_date_y = int(date[0:4])
+            end_date_m = int(date[5:8])
+            end_date_d = int(date[7:10])
+
+            backup_end_year = end_date_y
+            backup_end_month = end_date_m
+            backup_end_day = end_date_d
+
+
+            
+            while(backup_end_year < backup_start_year or (backup_end_year == backup_start_year and backup_end_month < backup_start_month) or 
+                 (backup_end_year == backup_start_year and backup_end_month == backup_start_month and backup_end_day < backup_start_day + 1)):
+
+                print("Invalid ending date. Final date must be at least 1 day after the starting day.\n")
+                print("Enter the last day in the range you wish to search at in the following format: YYYY MM DD\n")
+                date = input()
+                
+                print("\n\n")
+
+                end_date_y = int(date[0:4])
+                end_date_m = int(date[5:8])
+                end_date_d = int(date[7:10])
+
+                backup_end_year = end_date_y
+                backup_end_month = end_date_m
+                backup_end_day = end_date_d
+
+
+            total_recovered_cases = 0
+            print("Please wait, calculating total new cases\n")
+            while((backup_end_year != backup_start_year or backup_end_month != backup_start_month or backup_end_day != backup_start_day)):
+
+                
+                date = url_date
+                key = data['total']
+                today_recovered = key['today_new_recovered']
+                total_recovered_cases += today_recovered
+
+
+                backup_start_day += 1
+
+                if(backup_start_day == 32 and (backup_start_month == 1 or backup_start_month == 3 or backup_start_month == 5 or 
+                   backup_start_month == 7 or backup_start_month == 8 or backup_start_month == 10)):
+
+                    backup_start_day = 1
+                    backup_start_month += 1
+
+                if(backup_start_day == 29 and backup_start_month == 2):
+
+                    backup_start_day = 1
+                    backup_start_month += 1
+
+                if(backup_start_day == 31 and (backup_start_month == 4 or backup_start_month == 6  or backup_start_month == 9  or backup_start_month == 11)):
+                    backup_start_day = 1
+                    backup_start_month += 1
+
+                if(backup_start_day == 32 and backup_start_month == 12):
+                    backup_start_year += 1
+                    backup_start_month = 1
+                    backup_start_day = 1
+
+
+                start_date_y = backup_start_year  
+                start_date_m = backup_start_month 
+                start_date_d = backup_start_day  
+
+
+
+                start_date_y = str(start_date_y)
+
+                if(backup_start_month >= 10):
+                    start_date_m = str(start_date_m)
+
+                if(backup_start_month < 10):
+                    start_date_m = str(start_date_m)
+                    start_date_m = ("0" + start_date_m)
+
+                if(backup_start_day >= 10):
+                    start_date_d = str(start_date_d)
+                    
+
+                if(backup_start_day < 10):
+                    start_date_d = str(start_date_d)
+                    start_date_d = ("0" + start_date_d)
+                
+
+
+                url_date = (start_date_y + "-" + start_date_m + "-" + start_date_d)
+                url_date = str(url_date)
+                
+                url = ("https://api.covid19tracking.narrativa.com/api/"+url_date)
+                myfile = requests.get(url)
+    
+                text = myfile.text
+
+                data = json.loads(text)
+               
+                start_date_y = int(start_date_y)
+                start_date_m = int(start_date_m)
+                start_date_d = int(start_date_d)
+
+            total_recovered_cases = str(total_recovered_cases)
+            print("The total number of recoveries over the date range of " + url_backup + " to " + url_date + " is: " + total_recovered_cases)
+            
+    if(choice == 7):
+
+            print("Enter the last day in the range you wish to search at in the following format: YYYY MM DD\n")
+            date = input()
+            end_date_y = int(date[0:4])
+            end_date_m = int(date[5:8])
+            end_date_d = int(date[7:10])
+
+            backup_end_year = end_date_y
+            backup_end_month = end_date_m
+            backup_end_day = end_date_d
+
+
+            
+            while(backup_end_year < backup_start_year or (backup_end_year == backup_start_year and backup_end_month < backup_start_month) or 
+                 (backup_end_year == backup_start_year and backup_end_month == backup_start_month and backup_end_day < backup_start_day + 1)):
+
+                print("Invalid ending date. Final date must be at least 1 day after the starting day.\n")
+                print("Enter the last day in the range you wish to search at in the following format: YYYY MM DD\n")
+                date = input()
+                
+                print("\n\n")
+
+                end_date_y = int(date[0:4])
+                end_date_m = int(date[5:8])
+                end_date_d = int(date[7:10])
+
+                backup_end_year = end_date_y
+                backup_end_month = end_date_m
+                backup_end_day = end_date_d
+
+            total_deaths = 0
+            total_recovered_cases = 0
+            total_new_cases = 0
+
+
+            print("Please wait, calculating total new cases\n")
+            while((backup_end_year != backup_start_year or backup_end_month != backup_start_month or backup_end_day != backup_start_day)):
+
+                date = url_date
+                key = data['total']
+                today_recovered = key['today_new_recovered']
+                total_recovered_cases += today_recovered
+
+                today_new_deaths = key['today_new_deaths']
+                total_deaths += today_new_deaths
+
+                today_new_confirmed = key['today_new_confirmed']
+                total_new_cases += today_new_confirmed
+
+                backup_start_day += 1
+
+                if(backup_start_day == 32 and (backup_start_month == 1 or backup_start_month == 3 or backup_start_month == 5 or 
+                   backup_start_month == 7 or backup_start_month == 8 or backup_start_month == 10)):
+
+                    backup_start_day = 1
+                    backup_start_month += 1
+
+                if(backup_start_day == 29 and backup_start_month == 2):
+
+                    backup_start_day = 1
+                    backup_start_month += 1
+
+                if(backup_start_day == 31 and (backup_start_month == 4 or backup_start_month == 6  or backup_start_month == 9  or backup_start_month == 11)):
+                    backup_start_day = 1
+                    backup_start_month += 1
+
+                if(backup_start_day == 32 and backup_start_month == 12):
+                    backup_start_year += 1
+                    backup_start_month = 1
+                    backup_start_day = 1
+
+
+                start_date_y = backup_start_year  
+                start_date_m = backup_start_month 
+                start_date_d = backup_start_day  
+
+
+
+                start_date_y = str(start_date_y)
+
+                if(backup_start_month >= 10):
+                    start_date_m = str(start_date_m)
+
+                if(backup_start_month < 10):
+                    start_date_m = str(start_date_m)
+                    start_date_m = ("0" + start_date_m)
+
+                if(backup_start_day >= 10):
+                    start_date_d = str(start_date_d)
+                    
+
+                if(backup_start_day < 10):
+                    start_date_d = str(start_date_d)
+                    start_date_d = ("0" + start_date_d)
+                
+
+
+                url_date = (start_date_y + "-" + start_date_m + "-" + start_date_d)
+                url_date = str(url_date)
+
+                url = ("https://api.covid19tracking.narrativa.com/api/"+url_date)
+                myfile = requests.get(url)
+    
+                text = myfile.text
+
+                data = json.loads(text)
+               
+                start_date_y = int(start_date_y)
+                start_date_m = int(start_date_m)
+                start_date_d = int(start_date_d)
+
+
+            total_new_cases = str(total_new_cases)
+            print("The total number of new cases over the date range of " + url_backup + " to " + url_date + " is: " + total_new_cases)
+            
+            total_deaths = str(total_deaths)
+            print("\nThe total number of deaths over that range is: " + total_deaths)
+
+            total_recovered_cases = str(total_recovered_cases)
+            print("\nThe total number of recoveries over that range is: " + total_recovered_cases)
+                        
 pullCovidData()
 
 
