@@ -38,7 +38,7 @@ end_date = date.today()
 for single_date in daterange(start_date, end_date):
     datestr=single_date.strftime("%m-%d-%Y")
     #This is the url to pull data from the github
-    url = r'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/'+datestr+'.csv' 
+    url = r'https://api.covid19tracking.narrativa.com/api/2022-02-09'
     
     #Here is where you would store the data to sql
     print(url)
