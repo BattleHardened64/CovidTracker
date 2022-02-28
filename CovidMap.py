@@ -2,6 +2,7 @@ import os
 import csv
 import pandas as pd
 import dateutil
+import requests
 import string
 import urllib
 import datetime
@@ -22,7 +23,7 @@ def readPreviousCSVs():
     for i in range (1, 755):  #all the days between 1/22/20 and 2/16/22
         new_date = date_temp + datetime.timedelta(days=1)
         #filename = new_date + ".csv" # This line might break; not sure if dates can be treated as strings.
-        filename, headers = urllib.request.urlretrieve(url, filename = "https://github.com/BattleHardened64/CovidTracker/tree/CovidMap/mapData") #ADD TO GITHUB (WE NEED A FILE)
+        filename, headers = urllib.urlretrieve(url, filename = "https://github.com/BattleHardened64/CovidTracker/tree/CovidMap/mapData") #ADD TO GITHUB (WE NEED A FILE)
         filename += date_temp + ".csv"  # This line may break? Unsure.  Need to write a test.
         parseFile(filename)
 
@@ -37,7 +38,7 @@ def readCSV(date):
     date += '.csv'
     url = "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports"
     #We need to add a file to the github for all old files...
-    filename, headers = urllib.request.urlretrieve(url, filename = "https://github.com/BattleHardened64/CovidTracker/tree/CovidMap/mapData")
+    filename, headers = urllib.urlretrieve(url, filename = "https://github.com/BattleHardened64/CovidTracker/tree/CovidMap/mapData")
     parseFile(filename)
 
 
