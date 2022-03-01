@@ -223,6 +223,11 @@ def pullCovidData():
               "7. Total Cases, Deaths, and Recoveries Worldwide over a range of days\n")
 
     print("Enter the date and search option you want at in the following format: YYYY MM DD Choice")
+
+    #Parses the entered date and choice into the differnet parts, and converts the date
+    #into a format matching the api requirement of YYYY-MM-DD, as well as creates backups for 
+    #later function's uses.
+    ###########################################################################
     date = input()
     start_date_y = int(date[0:4])
     start_date_m = int(date[5:8])
@@ -256,7 +261,10 @@ def pullCovidData():
 
 
     url_backup = url_date
+    ###########################################################################
 
+    #Creates a file for database use as well as later in the program.
+    ###########################################################################
     url = ("https://api.covid19tracking.narrativa.com/api/"+url_date)
     myfile = requests.get(url)
     
@@ -267,7 +275,7 @@ def pullCovidData():
     file = open(fileName, "w")
     json.dump(data,file)
     file.close()
-
+    ###########################################################################
 
     
 
