@@ -1,8 +1,6 @@
 import os
 import csv
 import requests
-from datetime import timedelta, date
-from contextlib import closing
 import json
 
 def countries_func(counter):
