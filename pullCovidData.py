@@ -218,7 +218,8 @@ def pullCovidData():
               "4. Total Cases Worldwide over a range of days\n"
               "5. Total Deaths Worldwide over a range of days\n"
               "6. Total Recoveries Worldwide over a range of days\n"
-              "7. Total Cases, Deaths, and Recoveries Worldwide over a range of days\n")
+              "7. Total Cases, Deaths, and Recoveries Worldwide over a range of days\n"
+              "8. Total Cases, Deaths, and Recoveries Worldwide per county in America\n")
 
     print("Enter the date and search option you want at in the following format: YYYY MM DD Choice")
 
@@ -876,6 +877,45 @@ def pullCovidData():
 
             total_recovered_cases = str(total_recovered_cases)
             print("\nThe total number of recoveries over that range is: " + total_recovered_cases)
+
+    if(choice == 8):
+        key = data['dates']
+        key2 = key[url_date]
+        key3 = key2['countries']
+        key4 = key3["US"]
+        key5 = key4["regions"]
+        counter = 0
+        county_counter = 0
+        while (counter < 56):
+            key6 = key5[counter]
+            state_name = key6['name']
+            print("Information for " + state_name +":\n")
+
+            print("Totals: \n")
+            print("Today's New Case Count: " + str(key6['today_new_confirmed'])+ "\n")
+            print("Today's Death Count: " + str(key6['today_deaths'])+ "\n" )
+            #Fix for error in the API (missing entry)
+            if(counter != 21 and counter != 42):
+                print("Today's Recoveries: " + str(key6['today_new_recovered']) + "\n")
+
+            print("Information by county:\n")
+            try:
+                key7 = key6['sub_regions']
+            except:
+                break;
+            while(county_counter < 1000):
+                try:
+                    key8 = key7[county_counter]
+                    print("     " + key8['name'] + " County:\n")
+                    print("          Today's New Case Count: " + str(key8['today_new_confirmed'])+ "\n")
+                    print("          Today's Death Count: " + str(key8['today_deaths'])+ "\n" )
+                    print("          Today's Recoveries: " + str(key8['today_new_recovered']) + "\n\n\n")
+                    county_counter += 1
+                except:
+                    break;
+            county_counter = 0
+            counter+=1
+            
                         
 pullCovidData()
 
