@@ -214,12 +214,13 @@ def pullCovidData():
     print("Welcome to the COVID-19 Information Tracker. Your searching options are as follows:\n"
               "1. Global Totals for Today\n"
               "2. Today's Case Totals by Country\n"
-              "3. Totals by Country\n"
+              "3. Totals for a specific Country\n"
               "4. Total Cases Worldwide over a range of days\n"
               "5. Total Deaths Worldwide over a range of days\n"
               "6. Total Recoveries Worldwide over a range of days\n"
               "7. Total Cases, Deaths, and Recoveries Worldwide over a range of days\n"
-              "8. Total Cases, Deaths, and Recoveries Worldwide per county in America\n")
+              "8. Total Cases, Deaths, and Recoveries Worldwide per county in America\n"
+              "9. Total Cases, Deaths, and Recoveries Worldwide per province/district/region Worldwide\n")
 
     print("Enter the date and search option you want at in the following format: YYYY MM DD Choice")
 
@@ -916,7 +917,58 @@ def pullCovidData():
             county_counter = 0
             counter+=1
             
-                        
+    if(choice == 9):
+        key = data['dates']
+        key2 = key[url_date]
+        key3 = key2['countries']
+        counter = 0
+        county_counter = 0
+        global_counter = 1
+        while(global_counter < 196):
+            country = countries_func(global_counter)
+            try:
+                key4 = key3[country]
+            except:
+                global_counter += 1
+            else:
+                 print(country + ": \n")
+                 while (counter < 200):
+                    key5 = key4["regions"]
+
+                    try:
+                        key6 = key5[counter]
+                        state_name = key6['name']
+                        print("     Information for " + state_name +":\n")
+
+                        print("     Totals: \n")
+                        print("          Today's New Case Count: " + str(key6['today_new_confirmed'])+ "\n")
+                        print("          Today's Death Count: " + str(key6['today_deaths'])+ "\n" )
+                        #Fix for error in the API (missing entry)
+                        if(counter != 21 and counter != 42):
+                            print("          Today's Recoveries: " + str(key6['today_new_recovered']) + "\n")
+
+                        try:
+                            key7 = key6['sub_regions']
+                        except:
+                            break;
+                        while(county_counter < 1000):
+                            try:
+                                key8 = key7[county_counter]
+                                print("          " + key8['name'] + "\n")
+                                print("                   Today's New Case Count: " + str(key8['today_new_confirmed'])+ "\n")
+                                print("                   Today's Death Count: " + str(key8['today_deaths'])+ "\n" )
+                                print("                   Today's Recoveries: " + str(key8['today_new_recovered']) + "\n\n\n")
+                                county_counter += 1
+                            except:
+                                break;
+                    except:
+                       break;
+                    county_counter = 0
+                    counter+=1
+            global_counter += 1
+            counter = 0
+            county_counter = 0
+                           
 pullCovidData()
 
 
