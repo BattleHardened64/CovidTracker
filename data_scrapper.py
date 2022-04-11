@@ -27,9 +27,9 @@ def pullCovidData():
         cr = csv.reader(decoded_content.splitlines(), delimiter=',')
         my_list = list(cr)
         for row in my_list:
-            insert = """
+            insert = ("""
             INSERT INTO coviddata (FIPS, County, State_Province, Country_Region, Last_updated, Latitude, Longitude, Confirmed_Cases, Deaths, Recovered, Active_Cases, Location, Incident_rate, Fatality_Rate)
-            """
+            """)
 
             cursor.execute(insert)
             
