@@ -1,8 +1,9 @@
 import os
 import csv
 import requests
-import json
 import datetime
+import sqlite3
+
 
 
 def countries_func(counter):
@@ -207,283 +208,32 @@ def countries_func(counter):
      return country_list[counter]
 
 def pullCovidData():
-    
-    fileName = "covid-data.json"
 
     url_date = str(datetime.date.isoformat(datetime.date.today()))
+    url_date = "04-10-2022"
+
+    connection = sqlite3.connect("coviddata.db")
+    cursor = connection.cursor()
 
 
-    #Depricated, reads in date as a string.
-    #url_date = input("Enter the date in the following format: YYYY-MM-DD\n")
 
-    print("Welcome to the COVID-19 Information Tracker. Your searching options are as follows:\n"
-              "1. Global Totals for Today\n"
-              "2. Today's Case Totals by Country\n"
-              "3. Totals for a specific Country\n"
-              "8. Total Cases, Deaths, and Recoveries Worldwide per county in America\n"
-              "9. Total Cases, Deaths, and Recoveries Worldwide per province/district/region Worldwide\n")
-   
+    url = ("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"+url_date+".csv")
 
-    #Creates a file for database use as well as later in the program.
-    ###########################################################################
-    url = ("https://api.covid19tracking.narrativa.com/api/"+url_date)
-    myfile = requests.get(url)
-    
-    text = myfile.text
+    with requests.Session() as s:
+        download = s.get(url)
 
-    data = json.loads(text)
+        decoded_content = download.content.decode('utf-8')
 
-    file = open(fileName, "w")
-    json.dump(data,file)
-    file.close()
-    ###########################################################################
+        cr = csv.reader(decoded_content.splitlines(), delimiter=',')
+        my_list = list(cr)
+        for row in my_list:
+            insert = """
+            INSERT INTO coviddata (FIPS, County, State_Province, Country_Region, Last_updated, Latitude, Longitude, Confirmed_Cases, Deaths, Recovered, Active_Cases, Location, Incident_rate, Fatality_Rate)
+            """
 
-    choice = 1
-
-    if(choice == 1):
-
-        date = url_date
-        key = data['total']
-        today_confirmed = key['today_confirmed']
-        today_deaths = key['today_deaths']
-        today_new_confirmed = key['today_new_confirmed']
-        today_new_deaths = key['today_new_deaths']
-        today_new_open_cases = key['today_new_open_cases']
-        today_new_recovered = key['today_new_recovered']
-        today_open_cases = key['today_open_cases']
-        today_recovered = key['today_recovered']
-        yesterday_confirmed = key['yesterday_confirmed']
-        yesterday_deaths = key['yesterday_deaths']
-        yesterday_open_cases = key['yesterday_open_cases']
-        yesterday_recovered = key['yesterday_recovered']
-
-        diff_open = ( today_open_cases - yesterday_open_cases)
-
-
-        today_confirmed = str(today_confirmed)
-        today_deaths =str(today_deaths)
-        today_new_confirmed = str(today_new_confirmed)
-        today_new_deaths = str(today_new_deaths)
-        today_new_open_cases =str(today_new_open_cases)
-        today_new_recovered = str(today_new_recovered)
-        today_open_cases = str(today_open_cases)
-        today_recovered = str(today_recovered)
-        yesterday_confirmed = str(yesterday_confirmed)
-        yesterday_deaths =str(yesterday_deaths)
-        yesterday_open_cases =str(yesterday_open_cases)
-        yesterday_recovered =str(yesterday_recovered)
-
-   
-
-        print("Today's World Total Information:\n")
-        print("Date: " + url_date +'\n')
-        print("Total Confirmed Cases:"+ today_confirmed +'\n')
-        print("Today's New Confirmmed Cases: "+today_new_confirmed+'\n')
-        print("Total Deaths: "+today_deaths+'\n')
-        print("Today's Death Count: "+today_new_deaths+'\n')
-        print("Total Current Cases: "+today_open_cases+'\n')
-        print("Today's Current Cases: "+today_new_open_cases+'\n')
-        print("Total Recovered Cases: "+today_recovered+'\n')
-        print("Today's Recovered Cases: "+today_new_recovered+'\n')
-        print("Yesterady's Data\n\n")
-
-        print("Yesterday's Confirmed Cases: "+yesterday_confirmed+'\n')
-        print("Yesterday's Deaths: "+yesterday_deaths+'\n')
-        print("Yesterday's Open Cases: "+yesterday_open_cases+'\n')
-        print("Yesterday's Recovered Cases: "+yesterday_recovered+'\n')
-    
-        print("\nAnalysis:\n\n")
-    
-        if(diff_open < 0):
-            diff_open = diff_open * -1
-            diff_open = str(diff_open)
-            print("There has been a net gain of " + diff_open + " cases since yesterday\n")
-
-
-        else:
-            diff_open = str(diff_open)
-            print("There has been a net decrease of " + diff_open + " cases since yesterday\n")
-
-    if(choice == 2):
-        key = data['dates']
-        key2 = key[url_date]
-        key3 = key2['countries']
-        counter = 1
-        while(counter < 196):
-            country = countries_func(counter)
-            try:
-                key4 = key3[countries_func(counter)]
-            except:
-                counter += 1
-            else:
-                key5 = key4["today_confirmed"]
-                key5 = str(key5)
-                print("Confirmed cases for " + country + ": " + key5)
-                counter += 1
-
-    if(choice == 3):
-
-        key = data['dates']
-        key2 = key[url_date]
-        key3 = key2['countries']
-        country = input("Enter a country name to research\n")
-        try:
-            key4 = key3[country]
-
-        except:
-            country = input("Please enter a valid country name\n")
-            key4 = key3[country]
-
-
-        today_confirmed = key4['today_confirmed']
-        today_deaths = key4['today_deaths']
-        today_new_confirmed = key4['today_new_confirmed']
-        today_new_deaths = key4['today_new_deaths']
-        today_new_open_cases = key4['today_new_open_cases']
-        today_new_recovered = key4['today_new_recovered']
-        today_open_cases = key4['today_open_cases']
-        today_recovered = key4['today_recovered']
-        yesterday_confirmed = key4['yesterday_confirmed']
-        yesterday_deaths = key4['yesterday_deaths']
-        yesterday_open_cases = key4['yesterday_open_cases']
-        yesterday_recovered = key4['yesterday_recovered']
-
-        diff_open = ( today_open_cases - yesterday_open_cases)
-
-
-        today_confirmed = str(today_confirmed)
-        today_deaths =str(today_deaths)
-        today_new_confirmed = str(today_new_confirmed)
-        today_new_deaths = str(today_new_deaths)
-        today_new_open_cases =str(today_new_open_cases)
-        today_new_recovered = str(today_new_recovered)
-        today_open_cases = str(today_open_cases)
-        today_recovered = str(today_recovered)
-        yesterday_confirmed = str(yesterday_confirmed)
-        yesterday_deaths =str(yesterday_deaths)
-        yesterday_open_cases =str(yesterday_open_cases)
-        yesterday_recovered =str(yesterday_recovered)
-
-   
-
-        print("Today's World Total Information:\n")
-        print("Date: " + url_date +'\n')
-        print("Total Confirmed Cases:"+ today_confirmed +'\n')
-        print("Today's New Confirmmed Cases: "+today_new_confirmed+'\n')
-        print("Total Deaths: "+today_deaths+'\n')
-        print("Today's Death Count: "+today_new_deaths+'\n')
-        print("Total Current Cases: "+today_open_cases+'\n')
-        print("Today's Current Cases: "+today_new_open_cases+'\n')
-        print("Total Recovered Cases: "+today_recovered+'\n')
-        print("Today's Recovered Cases: "+today_new_recovered+'\n')
-        print("Yesterady's Data\n\n")
-
-        print("Yesterday's Confirmed Cases: "+yesterday_confirmed+'\n')
-        print("Yesterday's Deaths: "+yesterday_deaths+'\n')
-        print("Yesterday's Open Cases: "+yesterday_open_cases+'\n')
-        print("Yesterday's Recovered Cases: "+yesterday_recovered+'\n')
-    
-        print("\nAnalysis:\n\n")
-    
-        if(diff_open < 0):
-            diff_open = diff_open * -1
-            diff_open = str(diff_open)
-            print("There has been a net gain of " + diff_open + " cases since yesterday\n")
-
-
-        else:
-            diff_open = str(diff_open)
-            print("There has been a net decrease of " + diff_open + " cases since yesterday\n")
-
-    if(choice == 8):
-        key = data['dates']
-        key2 = key[url_date]
-        key3 = key2['countries']
-        key4 = key3["US"]
-        key5 = key4["regions"]
-        counter = 0
-        county_counter = 0
-        while (counter < 56):
-            key6 = key5[counter]
-            state_name = key6['name']
-            print("Information for " + state_name +":\n")
-
-            print("Totals: \n")
-            print("Today's New Case Count: " + str(key6['today_new_confirmed'])+ "\n")
-            print("Today's Death Count: " + str(key6['today_deaths'])+ "\n" )
-            #Fix for error in the API (missing entry)
-            if(counter != 21 and counter != 42):
-                print("Today's Recoveries: " + str(key6['today_new_recovered']) + "\n")
-
-            print("Information by county:\n")
-            try:
-                key7 = key6['sub_regions']
-            except:
-                break;
-            while(county_counter < 1000):
-                try:
-                    key8 = key7[county_counter]
-                    print("     " + key8['name'] + " County:\n")
-                    print("          Today's New Case Count: " + str(key8['today_new_confirmed'])+ "\n")
-                    print("          Today's Death Count: " + str(key8['today_deaths'])+ "\n" )
-                    print("          Today's Recoveries: " + str(key8['today_new_recovered']) + "\n\n\n")
-                    county_counter += 1
-                except:
-                    break;
-            county_counter = 0
-            counter+=1
+            cursor.execute(insert)
             
-    if(choice == 9):
-        key = data['dates']
-        key2 = key[url_date]
-        key3 = key2['countries']
-        counter = 0
-        county_counter = 0
-        global_counter = 1
-        while(global_counter < 196):
-            country = countries_func(global_counter)
-            try:
-                key4 = key3[country]
-            except:
-                global_counter += 1
-            else:
-                 print(country + ": \n")
-                 while (counter < 200):
-                    key5 = key4["regions"]
-
-                    try:
-                        key6 = key5[counter]
-                        state_name = key6['name']
-                        print("     Information for " + state_name +":\n")
-
-                        print("     Totals: \n")
-                        print("          Today's New Case Count: " + str(key6['today_new_confirmed'])+ "\n")
-                        print("          Today's Death Count: " + str(key6['today_deaths'])+ "\n" )
-                        #Fix for error in the API (missing entry)
-                        if(counter != 21 and counter != 42):
-                            print("          Today's Recoveries: " + str(key6['today_new_recovered']) + "\n")
-
-                        try:
-                            key7 = key6['sub_regions']
-                        except:
-                            break;
-                        while(county_counter < 1000):
-                            try:
-                                key8 = key7[county_counter]
-                                print("          " + key8['name'] + "\n")
-                                print("                   Today's New Case Count: " + str(key8['today_new_confirmed'])+ "\n")
-                                print("                   Today's Death Count: " + str(key8['today_deaths'])+ "\n" )
-                                print("                   Today's Recoveries: " + str(key8['today_new_recovered']) + "\n\n\n")
-                                county_counter += 1
-                            except:
-                                break;
-                    except:
-                       break;
-                    county_counter = 0
-                    counter+=1
-            global_counter += 1
-            counter = 0
-            county_counter = 0
+        connection.close()
                            
 pullCovidData()
 
