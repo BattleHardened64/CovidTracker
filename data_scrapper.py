@@ -29,9 +29,9 @@ def pullCovidData():
         for row in my_list:
             insert = ("""
             INSERT INTO coviddata (FIPS, County, State_Province, Country_Region, Last_updated, Latitude, Longitude, Confirmed_Cases, Deaths, Recovered, Active_Cases, Location, Incident_rate, Fatality_Rate)
-            """)
+            VALUES (%d, %s, %s, %s, %s, %f, %f, %d, %d, %d, %d, %s, %f , %f)""")
 
-            cursor.execute(insert)
+            cursor.execute(insert,row)
             
         connection.close()
                            
