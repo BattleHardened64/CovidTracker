@@ -1,10 +1,25 @@
-import os
+import sys
+import logging
+import pymysql
 import csv
-import requests
-import datetime
-import sqlite3
+#rds settings
 
+rds_host  = "coviddata.c0hduqczxapy.us-east-1.rds.amazonaws.com"
+username = "admin"
+password = "5^Qf6qW%&B5O5bz$"
+db_name = "coviddata"
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+try:
+    conn = pymysql.connect( host='coviddata-1.c0hduqczxapy.us-east-1.rds.amazonaws.com', user='admin',password='5^Qf6qW%&B5O5bz$', port=3306, database="coviddata")
+except pymysql.MySQLError as e:
+    logger.error("ERROR: Unexpected error: Could not connect to MySQL instance.")
+    logger.error(e)
+    sys.exit()
+
+logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
 
 
 def pullCovidData():
